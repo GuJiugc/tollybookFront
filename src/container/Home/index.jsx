@@ -4,8 +4,10 @@ import BillItem from '../../components/BillItem'
 import dayjs from 'dayjs';
 import {get} from '@/utils';
 import PopupType from '../../components/PopupType';
-import { PullToRefresh, InfiniteScroll, Toast } from 'antd-mobile'
+import { PullToRefresh, InfiniteScroll, FloatingBubble } from 'antd-mobile'
 import { DatePicker } from 'antd-mobile';
+import CustomIcon from '@/components/CustomIcon';
+import PopupAddBill from '../../components/PopupAddBill';
 
 import s from './style.module.less'
 
@@ -23,6 +25,8 @@ const Home = () => {
 
     const [totalExpense,setTotalExpense] = useState(0)
     const [totalIncome,setTotalIncome] = useState(0)
+
+    const addBillRef = useRef()
 
 
 
@@ -71,6 +75,11 @@ const Home = () => {
         setPage(1)
     }
 
+    const addToggle = () => {
+        addBillRef.current && addBillRef.current.show()
+    }
+
+
   return <div className={s.home}>
     <div className={s.header}>
       <div className={s.dataWrap}>
@@ -102,6 +111,7 @@ const Home = () => {
         }
     </div>
         <PopupType ref={typeRef} onSelect={select}></PopupType>
+        <PopupAddBill ref={addBillRef} onReload={refreshData}></PopupAddBill>
         <DatePicker
             visible={showDate}
             onClose={() => {
@@ -114,6 +124,15 @@ const Home = () => {
 
             }}
         />
+        <FloatingBubble
+            style={{
+            '--initial-position-bottom': '70px',
+            '--initial-position-right': '24px',
+            }}
+            onClick={addToggle}
+        >
+            <CustomIcon size="lg" type="icon-image-text"></CustomIcon>
+        </FloatingBubble>
   </div>
 }
 
