@@ -8,7 +8,7 @@ import {get, typeMap, post} from '@/utils';
 
 import s from './style.module.less';
 
-const PopupAddBill = forwardRef((props,ref) => {
+const PopupAddBill = forwardRef(({ detail = {}, onReload },ref) => {
     const [show,setShow] = useState(false)
     const [payType, setPayType] = useState('expense') // 支出或收入类型
     const [date,setDate] = useState(new Date())
@@ -23,6 +23,21 @@ const PopupAddBill = forwardRef((props,ref) => {
     const [remark,setRemark] = useState('') // 备注
     const [showRemark,setShowReamrk] = useState(false) // 备注输入框展示控制
 
+    const id = detail && detail.id
+
+    useEffect(() => {
+        if(detail.id) {
+            setPayType(detail.pay_type == 1 ? 'expense' : 'income')
+            setCurrentType({
+                id: detail.type_id,
+                name: detail.type_name
+            })
+            setRemark(detail.remark)
+            setAmount(detail.amount)
+            setDate(dayjs(detail.date).$d)
+        }
+    },[detail])
+
     useEffect(() => {
         const getList = async () => {
             const {data} = await get('/type/list')
@@ -30,7 +45,9 @@ const PopupAddBill = forwardRef((props,ref) => {
             const _income = data.filter(i => i.type == 2)
             setExpense(_expense)
             setIncome(_income)
-            setCurrentType(_expense[0]) // 新建账单，类型默认是支出类型的第一项
+            if(!id) {
+                setCurrentType(_expense[0]) // 新建账单，类型默认是支出类型的第一项
+            }
         }
         getList()
     },[])
@@ -87,19 +104,25 @@ const PopupAddBill = forwardRef((props,ref) => {
             remark: remark || ''
         }
 
-        const result = await post('/bill/add',params)
-        if(result.code == 200) {
-            Toast.show(result.msg)
-            setAmount('')
-            setPayType('expense')
-            setCurrentType(expense[0])
-            setDate(new Date())
-            setRemark('')
-            setShow(false)
-            if(props.onReload) props.onReload()
+        if(id) {
+            params.id = id
+            const result = await post('/bill/update',params)
+            Toast.show('修改成功')
         }else{
-            Toast.show(result.msg)
+            const result = await post('/bill/add',params)
+            if(result.code == 200) {
+                Toast.show(result.msg)
+                setAmount('')
+                setPayType('expense')
+                setCurrentType(expense[0])
+                setDate(new Date())
+                setRemark('')
+            }else{
+                Toast.show(result.msg)
+            }
         }
+        setShow(false)
+        if(onReload) onReload()
     }
 
     return (<Popup
@@ -109,7 +132,7 @@ const PopupAddBill = forwardRef((props,ref) => {
     >
         <div className={s.addWrap}>
             <header className={s.header}>
-                <span className={s.close} onClick={() => setShow(false)}>
+                <span className={s.close} onClick={() =>  {setShow(false);setKeyboardShow(false)}}>
                     <Icon type='wrong'></Icon>
                 </span>
             </header>
