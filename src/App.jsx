@@ -25,7 +25,7 @@ function App() {
             </Routes>
         </ConfigProvider>
 
-        <NavBar showNav={showNav}></NavBar>
+        <NavBar showNav={showNav} pathname={pathname}></NavBar>
       </>
     )
 }

@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import s from './style.module.less';
 import CustomIcon from "../CustomIcon";
 
-const NavBar = ({ showNav }) => {
-    const [activeKey, setActiveKey] = useState('/')
+const NavBar = ({ showNav, pathname }) => {
+    const [activeKey, setActiveKey] = useState(pathname)
     const navigate = useNavigate()
 
     const changeTab = (path) => {

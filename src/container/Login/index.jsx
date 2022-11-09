@@ -5,6 +5,7 @@ import CustomIcon from '@/components/CustomIcon'
 import Captcha from 'react18-verify-code';
 import {post} from '@/utils';
 import cx from 'classnames';
+import { useNavigate } from "react-router-dom";
 
 
 const Login = () => {
@@ -15,6 +16,7 @@ const Login = () => {
     const [verify,setVerify] = useState('') // 输入的验证码
     const [captcha, setCaptcha] = useState('') // 图片验证码
     const [type,setType] = useState('login') // 登录注册类型
+    const navigate = useNavigate()
 
       //  验证码变化，回调方法
     const handleChange = useCallback((captcha) => {
@@ -36,6 +38,7 @@ const Login = () => {
                 username,password
             })
             localStorage.setItem('token', data.token)
+            navigate('/')
         }else{
             if(!verify) {
                 Toast.show('请输入验证码！')
