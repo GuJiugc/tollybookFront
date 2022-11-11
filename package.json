@@ -16,6 +16,7 @@
     "postcss-pxtorem": "^6.0.0",
     "prop-types": "^15.8.1",
     "query-string": "^7.1.1",
+    "rc-form": "^2.4.12",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.4.3",
